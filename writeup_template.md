@@ -37,7 +37,9 @@ I start by preparing "object points", which will be the (x, y, z) coordinates of
 
 I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
 
-<img src=“output_images/comparison/undistorted_chess.png“ width="480" alt=“Calibration” />
+
+<img src="output_images/comparison/undistorted_chess.png" width="480" alt="undistorted_chesse" />
+
 
 
 ### Pipeline (single images)
@@ -60,12 +62,14 @@ vertices = np.array([[(150, imshape[0]),
 
 The result example is shown below:
 
-<img src=“output_images/comparison/region_of_int.png“ width="480" alt=“Region of Interest” />
+<img src="output_images/comparison/region_of_int.png" width="480" alt="region_of_int.png" />
+
 
 Then, use `undistort()` function to undistort this region.
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
 
-<img src=“output_images/comparison/undistorted_img.png“ width="480" alt=“Undistorted Test Image” />
+<img src="output_images/comparison/undistorted_img.png" width="480" alt="undistorted_img.png" />
+
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
@@ -74,7 +78,7 @@ I used a combination of color and gradient thresholds to generate a binary image
 
 Here's an example of my output for this step:
 
-<img src=“output_images/comparison/threshold_binary.png“ width="480" alt=“Region of Interest” />
+<img src="output_images/comparison/threshold_binary.png" width="480" alt="threshold_binary.png" />
 
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
@@ -105,7 +109,7 @@ This resulted in the following source and destination points:
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
-<img src=“output_images/comparison/test.png“ width="480" alt=“perspective” />
+<img src="output_images/comparison/test.png" width="480" alt="test.png" />
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
@@ -117,12 +121,11 @@ Then, we use the left and right line pixel positions to fit a polynomial to the 
 
 Here is the visualization of the sliding windows:
 
-<img src=“output_images/comparison/sliding.png“ width="480" alt=“sliding windows” />
+<img src="output_images/comparison/sliding.png" width="480" alt="sliding.png" />
 
 I also tried draw the lane shadow to skip the windows step once I found the lines. The result is shown below:
 
-<img src=“output_images/comparison/shaded_lane.png“ width="480" alt=“shaded” />
-
+<img src="output_images/comparison/shaded_lane.png" width="480" alt="shaded_lane.png" />
 
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
@@ -144,7 +147,7 @@ Radius of curvature is 786.9896433736152 m
 
 I implemented this step in the function `drawing()`.  Here is an example of my result on a test image:
 
-<img src=“output_images/comparison/drawing.png“ width="480" alt=“drawing map” />
+<img src="output_images/comparison/drawing.png" width="480" alt="drawing.png" />
 
 ---
 
