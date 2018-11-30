@@ -3,11 +3,7 @@
 
 In this project, the goal is to write a software pipeline to identify the lane boundaries in a video.
 
-<<<<<<< HEAD
 To view the output of the notebook, you can use this [link](Advanced-Lane-Lines.html)
-=======
-To view the output of the notebook, you can use this [link](Advanced-Lane-Lines.pdf)
->>>>>>> 82b45168e2d06d0725ba324a041b1fa9b72c4483
 
 
 ---
@@ -50,23 +46,6 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 #### 1. Provide an example of a distortion-corrected image.
 
-Before the distortion-correction step, I use `region_of_interest` function built in previous project, to extract the road region with lanes that we are interested. 
-The key to extract a good region is to find a best trapezoid which contains both lanes and exclude all the other noise on the road.
-
-The vertices I chose:
-
-```python
-vertices = np.array([[(150, imshape[0]), 
-						(570, 430), 
-						(700, 430),
-                     (imshape[1]-80, imshape[0])]], 
-						dtype=np.int32)
-```
-
-
-The result example is shown below:
-
-<img src="output_images/comparison/region_of_int.png" width="480" alt="region_of_int.png" />
 
 
 Then, use `undistort()` function to undistort this region.
@@ -75,45 +54,57 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 <img src="output_images/comparison/undistorted_img.png" width="480" alt="undistorted_img.png" />
 
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
-
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at `threshold_binary()` function in `Advanced-Lane-Lines.ipynb`). In order to detect different color of lane lines under caring degrees of daylight and shadow, I combined x gradient threshold and S channel, where the threshold of x gradient is `sx_thresh=(80, 110)` and threshold of S channel is `s_thresh=(100, 255)`.
-
-
-Here's an example of my output for this step:
-
-<img src="output_images/comparison/threshold_binary.png" width="480" alt="threshold_binary.png" />
-
-
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### 2. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
 The code for my perspective transform includes a function called `perspective_transform()`.  The `perspective_transform()` function takes as inputs a binary image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
 
 ```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
+    src = np.float32([[258, 679], [446, 549], [837, 549], [1045, 679]]) 
+    dst = np.float32([[258, 679], [258, 549], [837, 549], [837, 679]]) 
 ```
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 258, 679     | 58, 679       | 
+| 446, 549     | 258, 549     |
+| 837, 549    | 837, 549      |
+| 1045, 679     | 837, 679       |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
-<img src="output_images/comparison/test.png" width="480" alt="test.png" />
+<img src="output_images/comparison/bird_eye.png" width="480" alt="bird_eye.png" />
+
+Note: I add a challenge image below to get a better idea of the image processing :
+<img src=“test_images/challenge_test_img.jpg” width="480" alt="challenge_test_img.jpg" />
+
+
+Display all warped images:
+
+<img src=“test_images/comparison/binary_warped_images.png" width="480" alt="binary_warped_images.png" />
+
+
+#### 3. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+
+I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at `threshold_binary()` function in `Advanced-Lane-Lines.ipynb`). In order to detect different color of lane lines under caring degrees of daylight and shadow, I combined x gradient threshold and S channel, where the threshold of x gradient is `sx_thresh=(80, 110)` and threshold of S channel is `s_thresh=(100, 255)`.
+
+
+Here's result for this step:
+
+<img src="output_images/comparison/binary_warped_images.png" width="480" alt="binary_warped_images.png" />
+
+
+
+**UPDATE** 
+
+This time, I moved the `region_of_interest` operation after getting the warped images. In this way, I will have a better view on the lane of the road.
+
+The result example is shown below:
+
+<img src="output_images/comparison/region_images.png" width="480" alt="region_images.png" />
+
+
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
@@ -125,11 +116,11 @@ Then, we use the left and right line pixel positions to fit a polynomial to the 
 
 Here is the visualization of the sliding windows:
 
-<img src="output_images/comparison/sliding.png" width="480" alt="sliding.png" />
+<img src="output_images/comparison/sliding_window_all.png" width="480" alt="sliding_window_all.png" />
 
 I also tried draw the lane shadow to skip the windows step once I found the lines. The result is shown below:
 
-<img src="output_images/comparison/shaded_lane.png" width="480" alt="shaded_lane.png" />
+<img src="output_images/comparison/shaded_all.png" width="480" alt="shaded_all.png" />
 
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
@@ -142,8 +133,8 @@ To calculate the radius of curvature of the lane, I used the lanes information w
 The result for `test2.jpg` is:
 
 ```
-Offset from center is 1.1809495135856067 m
-Radius of curvature is 786.9896433736152 m
+Deviation is 0.21125143581062825 m
+Radius of curvature is 509.8638784213833 m
 ```
 
 
@@ -178,7 +169,6 @@ To make it more robust, I may need to modify vertices for different situation on
 
 To prevent the light or shadow interference, I need to combine more thresholds such as gradient magnitude threshold and direction threshold.
  
-
 
 
 
