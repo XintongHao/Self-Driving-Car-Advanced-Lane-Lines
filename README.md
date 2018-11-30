@@ -77,12 +77,13 @@ I verified that my perspective transform was working as expected by drawing the 
 <img src="output_images/comparison/bird_eye.png" width="480" alt="bird_eye.png" />
 
 Note: I add a challenge image below to get a better idea of the image processing :
-<img src=“test_images/challenge_test_img.jpg” width="480" alt="challenge_test_img.jpg" />
+
+<img src="test_images/challenge_test_img.jpg" width="480" alt="challenge_test_img.jpg" />
 
 
 Display all warped images:
 
-<img src=“test_images/comparison/binary_warped_images.png" width="480" alt="binary_warped_images.png" />
+<img src="output_images/comparison/binary_warped_images.png"  width="480" alt="binary_warped_images.png" />
 
 
 #### 3. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
