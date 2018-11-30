@@ -3,7 +3,11 @@
 
 In this project, the goal is to write a software pipeline to identify the lane boundaries in a video.
 
+<<<<<<< HEAD
 To view the output of the notebook, you can use this [link](Advanced-Lane-Lines.html)
+=======
+To view the output of the notebook, you can use this [link](Advanced-Lane-Lines.pdf)
+>>>>>>> 82b45168e2d06d0725ba324a041b1fa9b72c4483
 
 
 ---
