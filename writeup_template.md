@@ -76,17 +76,18 @@ I verified that my perspective transform was working as expected by drawing the 
 
 <img src="output_images/comparison/bird_eye.png" width="480" alt="bird_eye.png" />
 
+Note: I add a challenge image below to get a better idea of the image processing :
+<img src=“test_images/challenge_test_img.jpg” width="480" alt="challenge_test_img.jpg" />
 
+
+Display all warped images:
+
+<img src=“test_images/comparison/binary_warped_images.png" width="480" alt="binary_warped_images.png" />
 
 
 #### 3. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
 I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at `threshold_binary()` function in `Advanced-Lane-Lines.ipynb`). In order to detect different color of lane lines under caring degrees of daylight and shadow, I combined x gradient threshold and S channel, where the threshold of x gradient is `sx_thresh=(80, 110)` and threshold of S channel is `s_thresh=(100, 255)`.
-
-Note: I add a challenge image below to get a better idea of the image processing :
-
-<img src="test_images/challenge_test_img.jpg" width="480" alt="challenge_test_img.jpg" />
-
 
 
 Here's result for this step:
@@ -103,6 +104,12 @@ The result example is shown below:
 
 <img src="output_images/comparison/region_images.png" width="480" alt="region_images.png" />
 
+**UPDATE**
+
+This time, I also added a `img_pipeline` to do all the image preprocessing at the same time. The order in the pipeline is: undistorted -> perspective transform -> threshold binary -> region of interest
+
+
+<img src="output_images/comparison/pipline_all_images.png" width="480" alt="pipline_all_images.png" />
 
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
@@ -132,8 +139,8 @@ To calculate the radius of curvature of the lane, I used the lanes information w
 The result for `test2.jpg` is:
 
 ```
-Deviation is 0.21125143581062825 m
-Radius of curvature is 509.8638784213833 m
+Deviation is 0.2437536666373521 m
+Radius of curvature is 1236.0557194600517 m
 ```
 
 
