@@ -58,19 +58,25 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 
 The code for my perspective transform includes a function called `perspective_transform()`.  The `perspective_transform()` function takes as inputs a binary image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
 
+**UPDATE v3**
+
+In order to prevent shifting the lane horizontally, I update the source and destination points, and correct the offset calculation.
+
 ```python
-    src = np.float32([[258, 679], [446, 549], [837, 549], [1045, 679]]) 
-    dst = np.float32([[258, 679], [258, 549], [837, 549], [837, 679]]) 
+    src = np.float32([[180, img.shape[0]], [575, 460], 
+                      [705, 460], [1150, img.shape[0]]])
+    dst = np.float32([[320, img.shape[0]], [320, 0], 
+                      [960, 0], [960, img.shape[0]]])
 ```
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 258, 679     | 58, 679       | 
-| 446, 549     | 258, 549     |
-| 837, 549    | 837, 549      |
-| 1045, 679     | 837, 679       |
+| 180, 720     | 320, 720       | 
+| 575, 460     | 320,  0    |
+| 705, 460    | 960, 0      |
+| 1150, 720     | 960, 720       |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
@@ -96,7 +102,7 @@ Here's result for this step:
 
 
 
-**UPDATE** 
+**UPDATE v1** 
 
 This time, I moved the `region_of_interest` operation after getting the warped images. In this way, I will have a better view on the lane of the road.
 
@@ -104,7 +110,7 @@ The result example is shown below:
 
 <img src="output_images/comparison/region_images.png" width="480" alt="region_images.png" />
 
-**UPDATE**
+**UPDATE v2**
 
 This time, I also added a `img_pipeline` to do all the image preprocessing at the same time. The order in the pipeline is: undistorted -> perspective transform -> threshold binary -> region of interest
 
@@ -116,7 +122,11 @@ This time, I also added a `img_pipeline` to do all the image preprocessing at th
 
 The code to identify lane-line pixels and fit the positions with a polynomial can be funded in `find_lane_pixels()`. To track lane positions in the video, I also used `Line()` class and set `LEFT`, `RIGHT` corresponding to the left lane information and right lane information.
 
-First, I need to find the lane pixels by using the sliding windows. The hyper parameters of the window is: `nwindows = 9`, `margin = 50`, `minpix = 1`. We iterate through the windows to track the lanes curvature and store the activated pixels in the left lane and right lane list.
+**UPDATE v3**
+
+Update window’s parameter to improve the performance of lane detection.
+
+First, I need to find the lane pixels by using the sliding windows. The hyper parameters of the window is: `nwindows = 12`, `margin = 10`, `minpix = 50`. We iterate through the windows to track the lanes curvature and store the activated pixels in the left lane and right lane list.
 
 Then, we use the left and right line pixel positions to fit a polynomial to the line. There are some important result we need to use to update current lanes information for the video.
 
@@ -134,13 +144,13 @@ I also tried draw the lane shadow to skip the windows step once I found the line
 I did this in `measure_curvature_and_offset()`.
 To find the position of the vehicle with respect to the center, first, I calculated the midpoint (pixel) between left and right lanes and compared it to the midpoint of the camera (center of the image, pixel). Then, I converted the comparison result from pixels to meters and got the distance from the center of the lane. 
 
-To calculate the radius of curvature of the lane, I used the lanes information we got from previous step and also converted it from pixels to meters. At the same time, use `Line()` class to update the `Line.line_base_pos` and `Line.radius_of_curvature`. 
+To calculate the radius of curvature of the lane, I used the lanes information we got from previous step and also converted it from pixels to meters. This function will return left and right curvature. I only annotate the min of these two curvature on the final image.
 
-The result for `test2.jpg` is:
+For example, the result for `test2.jpg` is:
 
 ```
-Deviation is 0.2437536666373521 m
-Radius of curvature is 1236.0557194600517 m
+Deviation is 0.2976257104037232 m
+Radius of curvature is 1422.420671204666 m
 ```
 
 
@@ -156,9 +166,22 @@ I implemented this step in the function `drawing()`.  Here is an example of my r
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
+**UPDATE v3**
+
+This time, I mainly modified the video pipeline. Except the very first frame, each frame after detecting the lane position, would have a `verify_detection` to determine if this lane position is valid. 
+
+To estimate if it is valid, I set the threshold for `lane_width`, `offset_from_center`, and `curverad`.
+
+* If it is valid, then the `Line.detected` is `True`, update the `Line()` class and continue use all the result to draw the lane.
+* If it is not valid, then the `Line.detected` is `False`, we will only use the previous position result from the `Line()` class.
+
+
+
+
+
 Here's a [link to my video result](video_output/project_video_output.mp4)
 
-Here's a [link to challenge video result](video_output/project_video_output.mp4)
+Here's a [link to challenge videoå result](video_output/project_video_output.mp4)
 
 
 ---
